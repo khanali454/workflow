@@ -1,0 +1,9 @@
+.filepond--wrapper {
+    width: 200px;
+}
+.filepond--label-action {
+    font-size: small;
+}
+.filepond--drop-label {
+    min-height: 0rem;
+}
