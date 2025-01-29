@@ -209,10 +209,10 @@ const Automation = () => {
       create_webhook (board_id: ${active_board_id}, url: '${import.meta.env.VITE_API_BASE_URL}/webhook', event: change_status_column_value, config: '{"columnId":"${selectedColumn}", "columnValue":{"$any$":true}}') {id board_id}}`
     };
     console.log("wbhk_query : ", query);
-
-    axios.post('https://api.monday.com/v2', {
-      query: query
-    }, {
+    // JSON.stringify({
+    //   query : "mutation { create_webhook (board_id: 1234567890, url: \"https://www.webhooks.my-webhook/test/\", event: change_status_column_value, config: \"columnId\":\"status\", \"columnValue\":{ {\"$any$\":true}) { id board_id } }"
+    // }
+    axios.post('https://api.monday.com/v2', JSON.stringify({query:query}), {
       headers: {
         'Authorization': `Bearer ${token}`
       }
