@@ -52,10 +52,6 @@ const Automation = () => {
 
 
 
-
-
-
-
   document.addEventListener("click", (e) => {
     if (columnModalRef.current && !columnModalRef.current.contains(e.target)) {
       setShowColumnModal(false);
@@ -156,13 +152,13 @@ const Automation = () => {
 
   async function webhookDuplicacy(boardId, columnId) {
     let webhook_read_query = `query {
-  webhooks(board_id: ${boardId}){
-    id
-    event
-    board_id
-    config
-  }
-}`;
+      webhooks(board_id: ${boardId}){
+        id
+        event
+        board_id
+        config
+      }
+    }`;
 
     axios.post('https://api.monday.com/v2', {
       query: webhook_read_query
@@ -204,7 +200,7 @@ const Automation = () => {
       create_webhook (board_id: ${active_board_id}, url: "${import.meta.env.VITE_API_BASE_URL}/webhook", event: change_status_column_value, config: ${JSON.stringify(
       {
         columnId: selectedColumn,
-        columnValue: { '$any$': true }
+        columnValue: { 'any': true }
       }
     )})}`;
 
@@ -213,6 +209,16 @@ const Automation = () => {
       create_webhook (board_id: ${active_board_id}, url: 'https://geniusship.ai/webhook', event: change_status_column_value, config: '{"columnId":"${selectedColumn}", "columnValue":{"any":true}}') {id board_id}}`
     };
     console.log("wbhk_query : ", query);
+
+    axios.post('https://api.monday.com/v2', {
+      query: query
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then((response) => {
+      console.log("response webhook created : ", response);
+    });
 
 
 
