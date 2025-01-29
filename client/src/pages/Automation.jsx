@@ -211,7 +211,7 @@ const Automation = () => {
     console.log("wbhk_query : ", query);
 
     axios.post('https://api.monday.com/v2', {
-      query: query
+      query: wbhk_query
     }, {
       headers: {
         'Authorization': `Bearer ${token}`
