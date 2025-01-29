@@ -197,16 +197,16 @@ const Automation = () => {
 
 
     let wbhk_query = `mutation{
-      create_webhook (board_id: ${active_board_id}, url: "${import.meta.env.VITE_API_BASE_URL}/webhook", event: change_status_column_value, config: ${JSON.stringify(
+      create_webhook (board_id: ${active_board_id}, url: '${import.meta.env.VITE_API_BASE_URL}/webhook', event: 'change_status_column_value', config: ${JSON.stringify(
       {
         columnId: selectedColumn,
-        columnValue: { 'any': true }
+        columnValue: { '$any$': true }
       }
     )})}`;
 
     let query = {
       query: `mutation{
-      create_webhook (board_id: ${active_board_id}, url: 'https://geniusship.ai/webhook', event: change_status_column_value, config: '{"columnId":"${selectedColumn}", "columnValue":{"any":true}}') {id board_id}}`
+      create_webhook (board_id: ${active_board_id}, url: 'https://geniusship.ai/webhook', event: change_status_column_value, config: '{"columnId":"${selectedColumn}", "columnValue":{"$any$":true}}') {id board_id}}`
     };
     console.log("wbhk_query : ", query);
 
