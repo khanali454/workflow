@@ -152,7 +152,7 @@ const Automation = () => {
 
   async function webhookDuplicacy(boardId, columnId) {
     let webhook_read_query = `query {
-      webhooks(board_id: ${boardId}){
+      webhooks(board_id: ${boardId},app_webhooks_only:true){
         id
         event
         board_id
@@ -196,56 +196,41 @@ const Automation = () => {
     }
 
 
-    const query = `
-    mutation {
-      create_webhook (
-        board_id: ${active_board_id}, 
-        url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
-        event: change_status_column_value, 
-        config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
-      ) { 
-        id 
-        board_id 
-      } 
-    }
-  `;
+  //   const query = `
+  //   mutation {
+  //     create_webhook (
+  //       board_id: ${active_board_id}, 
+  //       url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
+  //       event: change_status_column_value, 
+  //       config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
+  //     ) { 
+  //       id 
+  //       board_id 
+  //     } 
+  //   }
+  // `;
 
-    // let query = {
-    //   query: `mutation{
-    //   create_webhook (board_id: ${active_board_id}, url: '${import.meta.env.VITE_API_BASE_URL}/webhook', event: change_status_column_value, config: '{"columnId":"${selectedColumn}", "columnValue":{"$any$":true}}') {id board_id}}`
-    // };
-    // console.log("wbhk_query : ", query);
-    // JSON.stringify({
-    //   query : "mutation { create_webhook (board_id: 1234567890, url: \"https://www.webhooks.my-webhook/test/\", event: change_status_column_value, config: \"columnId\":\"status\", \"columnValue\":{ {\"$any$\":true}) { id board_id } }"
-    // }
-    axios.post('https://api.monday.com/v2', {query}, {
-      headers: {
-        'Authorization': `Bearer ${token}`
+  //   axios.post('https://api.monday.com/v2', { query }, {
+  //     headers: {
+  //       'Authorization': `Bearer ${token}`
+  //     }
+  //   }).then((response) => {
+  //     console.log("response webhook created : ", response);
+  //   });
+
+    axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
+      if (resp?.data?.success) {
+        alert("Automation Created successfully");
+        console.log("success response : ", resp);
+      } else {
+        console.log("error response : ", resp);
+        alert(resp?.data?.msg);
       }
-    }).then((response) => {
-      console.log("response webhook created : ", response);
+    }, (error) => {
+      console.log("error : ", error);
     });
 
-
-
-    // creat webhook !! 
-
-    // console.log("automationData : ", automationData);
-
-    // axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
-    //   if (resp?.data?.success) {
-    //     alert("Automation Created successfully");
-    //     console.log("success response : ", resp);
-    //   } else {
-    //     console.log("error response : ", resp);
-    //     alert(resp?.data?.msg);
-    //   }
-
-    // }, (error) => {
-    //   console.log("error : ", error);
-    // });
-
-
+    
 
   }
 
