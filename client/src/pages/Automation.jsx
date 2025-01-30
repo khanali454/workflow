@@ -196,23 +196,29 @@ const Automation = () => {
     }
 
 
-    let wbhk_query = `mutation{
-      create_webhook (board_id: ${active_board_id}, url: '${import.meta.env.VITE_API_BASE_URL}/webhook', event: 'change_status_column_value', config: ${JSON.stringify(
-      {
-        columnId: selectedColumn,
-        columnValue: { '$any$': true }
-      }
-    )})}`;
+    const query = `
+    mutation {
+      create_webhook (
+        board_id: ${active_board_id}, 
+        url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
+        event: change_status_column_value, 
+        config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
+      ) { 
+        id 
+        board_id 
+      } 
+    }
+  `;
 
-    let query = {
-      query: `mutation{
-      create_webhook (board_id: ${active_board_id}, url: '${import.meta.env.VITE_API_BASE_URL}/webhook', event: change_status_column_value, config: '{"columnId":"${selectedColumn}", "columnValue":{"$any$":true}}') {id board_id}}`
-    };
-    console.log("wbhk_query : ", query);
+    // let query = {
+    //   query: `mutation{
+    //   create_webhook (board_id: ${active_board_id}, url: '${import.meta.env.VITE_API_BASE_URL}/webhook', event: change_status_column_value, config: '{"columnId":"${selectedColumn}", "columnValue":{"$any$":true}}') {id board_id}}`
+    // };
+    // console.log("wbhk_query : ", query);
     // JSON.stringify({
     //   query : "mutation { create_webhook (board_id: 1234567890, url: \"https://www.webhooks.my-webhook/test/\", event: change_status_column_value, config: \"columnId\":\"status\", \"columnValue\":{ {\"$any$\":true}) { id board_id } }"
     // }
-    axios.post('https://api.monday.com/v2', JSON.stringify(query), {
+    axios.post('https://api.monday.com/v2', {query}, {
       headers: {
         'Authorization': `Bearer ${token}`
       }
