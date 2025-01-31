@@ -177,7 +177,8 @@ const Automation = () => {
         const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
         // Parse JSON
         const cfig = JSON.parse(validJsonString);
-        console.log(cfig.columnId);
+        console.log("parsed json : ",validJsonString);
+        console.log("cfig_column id :",cfig?.columnId);
          cfig?.columnId == columnId;
       });
       console.log("filtered webhook : ", webhook);
