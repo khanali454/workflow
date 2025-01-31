@@ -32,7 +32,6 @@ app.post("/webhook", function (req, res) {
   var automation_data =  AutomationModel.find({board_id:boardId,columnId:columnId,columnValue:currentValue});
 console.log("automation data : ",automation_data);
     res.status(200).send(req.body);
-})
 
 app.post('/create/automation', (req, resp) => {
     let boardId = req.body.boardId;
