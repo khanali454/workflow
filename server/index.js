@@ -29,10 +29,8 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ",previousValue);
 
     // find item
-   AutomationModel.find({board_id:boardId,columnId:columnId,columnValue:currentValue},function(err,automation_data){
-       console.log("automation data : ",automation_data);
-
-   });
+  var automation_data =  AutomationModel.find({board_id:boardId,columnId:columnId,columnValue:currentValue});
+console.log("automation data : ",automation_data);
     res.status(200).send(req.body);
 })
 
