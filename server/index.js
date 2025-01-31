@@ -14,8 +14,8 @@ app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
 
-app.get("/", function () {
-    return 'hello world';
+app.get("/", function (req, res) {
+    resp.json({ success: true, msg: 'test' });
 })
 app.post("/webhook", function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
