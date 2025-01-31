@@ -19,7 +19,7 @@ app.get("/", function (req, res) {
         console.log("data : ",data);
     });
     console.log("resp : ",resp);
-    const cursor=db.collection('automations').find({});
+    const cursor=db.db.collection('automations').find({});
     console.log("cursor :",cursor);
     res.json({ success: true, msg: 'test' });
 })
