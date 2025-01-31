@@ -17,7 +17,7 @@ app.listen(PORT, () => {
 app.get("/", function () {
     return 'hello world';
 })
-app.post("/webhook", function (req, res) {
+app.post("/webhook", async function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
     var boardId = req.body.event.boardId;
     var columnId = req.body.event.columnId;
@@ -29,11 +29,7 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ", previousValue);
 
     // find item
-    var finded = AutomationModel.find({ board_id: { $eq: `${boardId}` } }).then((doc) => {
-        console.log("finded doc : ", doc);
-    }).catch((error)=>{
-        console.log("error : ",error);
-    });
+    var finded =await AutomationModel.find({ board_id: { $eq: `${boardId}` } });
     console.log("finded : ", finded);
    
     res.status(200).send(req.body);
