@@ -168,6 +168,9 @@ const Automation = () => {
       }
     }).then((response) => {
       console.log("response webhook readed : ", response);
+      column_cfg = JSON.parse(response?.config || {});
+      console.log('parsed configs : ',column_cfg);
+      console.log("cfg column id : ",column_cfg?.columnId);
     });
 
     return true;
@@ -193,22 +196,24 @@ const Automation = () => {
 
     if (webhookDuplicacy(active_board_id, selectedColumn)) {
 
+    }else{
+
     }
 
 
-  //   const query = `
-  //   mutation {
-  //     create_webhook (
-  //       board_id: ${active_board_id}, 
-  //       url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
-  //       event: change_status_column_value, 
-  //       config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
-  //     ) { 
-  //       id 
-  //       board_id 
-  //     } 
-  //   }
-  // `;
+    const query = `
+    mutation {
+      create_webhook (
+        board_id: ${active_board_id}, 
+        url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
+        event: change_status_column_value, 
+        config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
+      ) { 
+        id 
+        board_id 
+      } 
+    }
+  `;
 
   //   axios.post('https://api.monday.com/v2', { query }, {
   //     headers: {
@@ -218,19 +223,19 @@ const Automation = () => {
   //     console.log("response webhook created : ", response);
   //   });
 
-    axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
-      if (resp?.data?.success) {
-        alert("Automation Created successfully");
-        console.log("success response : ", resp);
-      } else {
-        console.log("error response : ", resp);
-        alert(resp?.data?.msg);
-      }
-    }, (error) => {
-      console.log("error : ", error);
-    });
+    // axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
+    //   if (resp?.data?.success) {
+    //     alert("Automation Created successfully");
+    //     console.log("success response : ", resp);
+    //   } else {
+    //     console.log("error response : ", resp);
+    //     alert(resp?.data?.msg);
+    //   }
+    // }, (error) => {
+    //   console.log("error : ", error);
+    // });
 
-    
+
 
   }
 
