@@ -37,10 +37,10 @@ app.post("/webhook", function (req, res) {
     AutomationModel.findOne({ board_id: `${boardId}`,columnId:`${columnId}`})
     .then((rep) => {
          console.log("rep : ", rep);
-         if(rep?.columnValue==currentValue){
+         if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
             let template = rep?.template;
             rep?.users.forEach((user)=>{
-                sendNotification(template,"Project",boardId,user.id,);
+                sendNotification(template,"Project",boardId,user?.id);
             });
          }
          res.status(200).send(req.body);

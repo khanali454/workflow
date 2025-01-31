@@ -167,13 +167,17 @@ const Automation = () => {
         'Authorization': `Bearer ${token}`
       }
     }).then((response) => {
-      console.log("response webhook readed : ", response);
-      column_cfg = JSON.parse(response?.config || {});
-      console.log('parsed configs : ',column_cfg);
-      console.log("cfg column id : ",column_cfg?.columnId);
+      const webhooks = response?.data?.webhooks;
+      console.log("response webhooks : ", webhooks);
+      const webhook = webhooks.filter((webhook) => (JSON.parse(webhook?.config)?.columnId == columnId));
+      if (webhook) {
+        return true;
+      }
     });
 
-    return true;
+
+    return false;
+
   }
 
 
@@ -195,9 +199,9 @@ const Automation = () => {
     };
 
     if (webhookDuplicacy(active_board_id, selectedColumn)) {
-
-    }else{
-
+      console.log("yes found !!");
+    } else {
+      console.log("not found !! must be created");
     }
 
 
@@ -215,13 +219,13 @@ const Automation = () => {
     }
   `;
 
-  //   axios.post('https://api.monday.com/v2', { query }, {
-  //     headers: {
-  //       'Authorization': `Bearer ${token}`
-  //     }
-  //   }).then((response) => {
-  //     console.log("response webhook created : ", response);
-  //   });
+    //   axios.post('https://api.monday.com/v2', { query }, {
+    //     headers: {
+    //       'Authorization': `Bearer ${token}`
+    //     }
+    //   }).then((response) => {
+    //     console.log("response webhook created : ", response);
+    //   });
 
     // axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
     //   if (resp?.data?.success) {
