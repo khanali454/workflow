@@ -15,9 +15,10 @@ app.listen(PORT, () => {
 });
 
 app.get("/", function (req, res) {
-    AutomationModel.findOne({board_id:{$eq:"1716657874"}}).then((data)=>{
+   let resp =  AutomationModel.findOne({board_id:{$eq:"1716657874"}}).then((data)=>{
         console.log("data : ",data);
-    })
+    });
+    console.log("resp : ",resp);
     res.json({ success: true, msg: 'test' });
 })
 app.post("/webhook", function (req, res) {
