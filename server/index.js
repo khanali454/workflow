@@ -15,7 +15,7 @@ app.listen(PORT, () => {
 });
 
 app.get("/", function () {
-   return 'hello world';
+    return 'hello world';
 })
 app.post("/webhook", function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
@@ -23,16 +23,17 @@ app.post("/webhook", function (req, res) {
     var columnId = req.body.event.columnId;
     var currentValue = req.body.event.value.label.text;
     var previousValue = req.body.event.previousValue.label.text;
-    console.log("boardId : ",boardId);
-    console.log("columnId : ",columnId);
-    console.log("currentValue : ",currentValue);
-    console.log("previousValue : ",previousValue);
+    console.log("boardId : ", boardId);
+    console.log("columnId : ", columnId);
+    console.log("currentValue : ", currentValue);
+    console.log("previousValue : ", previousValue);
 
     // find item
-    AutomationModel.findOne({board_id:boardId,columnId:columnId,columnValue:currentValue}).then(auto=>{
-      console.log("automation data : ",auto);
-
-  });
+    AutomationModel.findOne({ board_id: boardId, columnId: columnId, columnValue: currentValue }).then(auto => {
+        console.log("automation data : ", auto);
+    }).catch((err) => {
+        console.log("err : ", err);
+    });
     res.status(200).send(req.body);
 
 });
