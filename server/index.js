@@ -15,7 +15,10 @@ app.listen(PORT, () => {
 });
 
 app.get("/", function (req, res) {
-    resp.json({ success: true, msg: 'test' });
+    AutomationModel.findOne({board_id:{$eq:"1716657874"}}).then((data)=>{
+        console.log("data : ",data);
+    })
+    res.json({ success: true, msg: 'test' });
 })
 app.post("/webhook", function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
@@ -53,11 +56,11 @@ app.post('/create/automation', (req, resp) => {
     }
 
     const filter = {
-        board_id: boardId,
-        columnType: columnType,
-        columnId: columnId,
-        columnValue: columnValue,
-        users: users,
+        board_id: {$eq:`${boardId}`},
+        columnType: {$eq:`${columnType}`},
+        columnId: {$eq:`${columnId}`},
+        columnValue: {$eq:`${columnValue}`},
+        users: {$eq:users},
     };
 
     AutomationModel.findOneAndUpdate(filter, {
