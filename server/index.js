@@ -30,10 +30,11 @@ app.post("/webhook", function (req, res) {
     AutomationModel.findOne({ board_id: `${boardId}`,columnId:`${columnId}`})
     .then((rep) => {
          console.log("rep : ", rep);
+         res.status(200).send(req.body);
     })
     .catch((err) => console.error("Query Error:", err));
    
-    res.status(200).send(req.body);
+   
 
 });
 app.post('/create/automation', (req, resp) => {
