@@ -167,6 +167,7 @@ const Automation = () => {
         'Authorization': `Bearer ${token}`
       }
     }).then((response) => {
+      console.log("webhooks : ", response);
       const webhooks = response?.data?.webhooks;
       console.log("response webhooks : ", webhooks);
       const webhook = webhooks.filter((webhook) => (JSON.parse(webhook?.config)?.columnId == columnId));
