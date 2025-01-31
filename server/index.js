@@ -14,6 +14,13 @@ app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
 
+const sendNotification = (notification_text, TargetType = "Project", BoardId, UserId) => {
+    let query = `mutation {
+        create_notification (user_id: ${UserId}, target_id: ${BoardId}, text: ${notification_text}, target_type: ${TargetType}) {
+          text
+        }
+    }`;
+}
 
 app.post("/webhook", function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
@@ -27,13 +34,18 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ", previousValue);
 
     // find item
-    AutomationModel.find({ board_id: `${boardId}`,columnId:`${columnId}`})
+    AutomationModel.findOne({ board_id: `${boardId}`,columnId:`${columnId}`})
     .then((rep) => {
          console.log("rep : ", rep);
+         if(rep?.columnValue==currentValue){
+            let template = rep?.template;
+            rep?.users.forEach((user)=>{
+                sendNotification(template,"Project",boardId,user.id,);
+            });
+         }
          res.status(200).send(req.body);
         })
         .catch((err) => console.error("Query Error:", err));
-   
 });
 app.post('/create/automation', (req, resp) => {
     let boardId = req.body.boardId;
