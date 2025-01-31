@@ -19,6 +19,9 @@ app.get("/", function () {
 })
 app.post("/webhook", function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
+    console.log("boardId : ",req.body.event.boardId);
+    console.log("columnId : ",req.body.event.columnId);
+    console.log("label text : ",req.body.event.value.label.text);
     res.status(200).send(req.body);
 })
 
