@@ -29,7 +29,7 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ", previousValue);
 
     // find item
-    db.getCollection('automations_db').findOne({ board_id: boardId, columnId: columnId }).then(auto => {
+    AutomationModel.findOne({ board_id: boardId, columnId: columnId }).then((auto) => {
         console.log("automation data : ", auto);
     }).catch((err) => {
         console.log("err : ", err);
