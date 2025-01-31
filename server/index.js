@@ -29,8 +29,10 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ",previousValue);
 
     // find item
-   const automation_item =  AutomationModel.where("board_id").equals(boardId).where('columnId').equals(columnId).where('columnValue').equals(currentValue).select('notification users');
-   console.log("automation object : ",automation_item);
+   AutomationModel.find({board_id:boardId,columnId:columnId,columnValue:currentValue},function(err,automation_data){
+       console.log("automation data : ",automation_data);
+
+   });
     res.status(200).send(req.body);
 })
 
