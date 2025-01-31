@@ -29,11 +29,7 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ", previousValue);
 
     // find item
-   var finded =  AutomationModel.findOne({ board_id: {$eq:`${boardId}`}}).then((auto) => {
-        console.log("automation data : ", auto);
-    }).catch((err) => {
-        console.log("err : ", err);
-    });
+   var finded =  AutomationModel.findOne({ board_id: {$eq:`${boardId}`}});
     console.log("finded : ", finded);
     res.status(200).send(req.body);
 
