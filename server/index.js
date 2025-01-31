@@ -27,7 +27,7 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ", previousValue);
 
     // find item
-    AutomationModel.findOne({ board_id: `${boardId}`,columnId:`${columnId}`})
+    AutomationModel.find({ board_id: `${boardId}`,columnId:`${columnId}`})
     .then((rep) => {
          console.log("rep : ", rep);
          res.status(200).send(req.body);
