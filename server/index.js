@@ -19,9 +19,18 @@ app.get("/", function () {
 })
 app.post("/webhook", function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
-    console.log("boardId : ",req.body.event.boardId);
-    console.log("columnId : ",req.body.event.columnId);
-    console.log("label text : ",req.body.event.value.label.text);
+    var boardId = req.body.event.boardId;
+    var columnId = req.body.event.columnId;
+    var currentValue = req.body.event.value.label.text;
+    var previousValue = req.body.event.previousValue.label.text;
+    console.log("boardId : ",boardId);
+    console.log("columnId : ",columnId);
+    console.log("currentValue : ",currentValue);
+    console.log("previousValue : ",previousValue);
+
+    // find item
+   let automation_item =  AutomationModel.where("board_id").equals(boardId).where('columnId').equals(columnId).where('columnValue').equals(currentValue).select('notification,users');
+   console.log("automation object : ",automation_item);
     res.status(200).send(req.body);
 })
 
