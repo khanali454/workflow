@@ -14,15 +14,7 @@ app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
 
-app.get("/", function (req, res) {
-   let resp =  AutomationModel.findOne({board_id:{$eq:"1716657874"}}).then((data)=>{
-        console.log("data : ",data);
-    });
-    console.log("resp : ",resp);
-    const cursor=db.db.collection('automations').find({});
-    console.log("cursor :",cursor);
-    res.json({ success: true, msg: 'test' });
-})
+
 app.post("/webhook", function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
     var boardId = req.body.event.boardId;
@@ -35,12 +27,11 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ", previousValue);
 
     // find item
-    var finded = AutomationModel.find({}).then((doc) => {
-        console.log("finded doc : ", doc);
-    }).catch((error)=>{
-        console.log("error : ",error);
-    });
-    console.log("finded : ", finded);
+    AutomationModel.findOne({ board_id: `${boardId}`,columnId:`${columnId}`})
+    .then((rep) => {
+         console.log("rep : ", rep);
+    })
+    .catch((err) => console.error("Query Error:", err));
    
     res.status(200).send(req.body);
 
