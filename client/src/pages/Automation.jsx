@@ -171,11 +171,14 @@ const Automation = () => {
       const webhooks = response?.data?.data?.webhooks;
       console.log("response webhooks : ", webhooks);
       const webhook = webhooks.filter((webhook) => {
-        console.log("webhook : ",webhook);
+        console.log("webhook : ", webhook);
         const cfg = webhook?.config;
-        console.log(" cfg :",cfg);
-        console.log(" cfg columnId :",cfg?.columnId);
-        cfg?.columnId == columnId;
+        // Convert Ruby-style hash to valid JSON format
+        const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
+        // Parse JSON
+        const cfig = JSON.parse(validJsonString);
+        console.log(cfig.columnId);
+         cfig?.columnId == columnId;
       });
       console.log("filtered webhook : ", webhook);
       if (webhook?.columnId != null || webhook?.columnId != "") {
