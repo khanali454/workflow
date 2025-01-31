@@ -179,10 +179,10 @@ const Automation = () => {
         const cfig = JSON.parse(validJsonString);
         console.log("parsed json : ",validJsonString);
         console.log("cfig_column id :",cfig?.columnId);
-         cfig?.columnId == columnId;
+         return cfig?.columnId == columnId;
       });
       console.log("filtered webhook : ", webhook);
-      if (webhook?.columnId != null || webhook?.columnId != "") {
+      if (webhook?.id != null || webhook?.id != "") {
         return true;
       }
     });
