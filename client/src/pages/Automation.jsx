@@ -168,7 +168,7 @@ const Automation = () => {
       }
     }).then((response) => {
       console.log("webhooks : ", response);
-      const webhooks = response?.data?.webhooks;
+      const webhooks = response?.data?.data?.webhooks;
       console.log("response webhooks : ", webhooks);
       const webhook = webhooks.filter((webhook) => (JSON.parse(webhook?.config)?.columnId == columnId));
       if (webhook) {
