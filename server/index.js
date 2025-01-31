@@ -29,14 +29,13 @@ app.post("/webhook", function (req, res) {
     console.log("previousValue : ", previousValue);
 
     // find item
-   var finded =  AutomationModel.find({ board_id: {$eq:`${boardId}`}}).then((doc)=>{
-    console.log("finded doc : ", doc);
-});
+    var finded = AutomationModel.find({ board_id: { $eq: `${boardId}` } }).then((doc) => {
+        console.log("finded doc : ", doc);
+    }).catch((error)=>{
+        console.log("error : ",error);
+    });
     console.log("finded : ", finded);
-   var other =  db.collection.find({ board_id: {$eq:`${boardId}`}}).then((doc)=>{
-       console.log("other doc : ", doc);
-   });
-    console.log("other : ", other);
+   
     res.status(200).send(req.body);
 
 });
