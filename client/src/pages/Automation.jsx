@@ -172,8 +172,9 @@ const Automation = () => {
       console.log("response webhooks : ", webhooks);
       const webhook = webhooks.filter((webhook) => {
         console.log("webhook : ",webhook);
-        const cfg = JSON.parse(webhook?.config);
+        const cfg = webhook?.config;
         console.log(" cfg :",cfg);
+        console.log(" cfg columnId :",cfg?.columnId);
         cfg?.columnId == columnId;
       });
       console.log("filtered webhook : ", webhook);
