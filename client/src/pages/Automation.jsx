@@ -170,19 +170,18 @@ const Automation = () => {
       console.log("webhooks : ", response);
       const webhooks = response?.data?.data?.webhooks;
       console.log("response webhooks : ", webhooks);
-      const webhook = webhooks.filter((webhook) => {
+      const webhook = webhooks.foreach((webhook) => {
         
         const cfg = webhook?.config;
         const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
         const cfig = JSON.parse(validJsonString);
         console.log(" cfig?.columnId : ", cfig?.columnId);
         console.log("columnId :",columnId);
-          cfig?.columnId == columnId;
+          if(cfig?.columnId == columnId){
+            return true;
+          }
       });
-      console.log("filtered webhook : ", webhook);
-      if (webhook?.length > 0 && webhook) {
-        return true;
-      }
+      
     });
 
 
