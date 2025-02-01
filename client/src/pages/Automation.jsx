@@ -180,7 +180,7 @@ const Automation = () => {
           cfig?.columnId == columnId;
       });
       console.log("filtered webhook : ", webhook);
-      if (webhook?.id != null || webhook?.id != "") {
+      if (webhook?.length > 0 && webhook) {
         return true;
       }
     });
