@@ -150,7 +150,7 @@ const Automation = () => {
   }
 
 
-  async function webhookDuplicacy(boardId, columnId) {
+   function webhookDuplicacy(boardId, columnId) {
     let webhook_read_query = `query {
       webhooks(board_id: ${boardId},app_webhooks_only:true){
         id
