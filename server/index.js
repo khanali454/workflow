@@ -7,6 +7,10 @@ const db = require('./db');
 const AutomationModel = require('./models/Automation');
 const app = express();
 const PORT = process.env.PORT || 8080;
+
+const session = require("express-session");
+const cookieParser = require("cookie-parser");
+
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
@@ -14,12 +18,28 @@ app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
 
-const sendNotification = (notification_text, TargetType = "Project", BoardId, UserId) => {
+// Initialization
+app.use(cookieParser());
+
+app.use(session({
+    secret: "token",
+    saveUninitialized: true,
+    resave: true
+}));
+
+const sendNotification = (notification_text, TargetType = "Project", BoardId, UserId,token) => {
     let query = `mutation {
         create_notification (user_id: ${UserId}, target_id: ${BoardId}, text: ${notification_text}, target_type: ${TargetType}) {
           text
         }
     }`;
+    axios.post('https://api.monday.com/v2', { query }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then((response) => {
+      console.log("response webhook created : ", response);
+    });
 }
 
 app.post("/webhook", function (req, res) {
@@ -40,7 +60,7 @@ app.post("/webhook", function (req, res) {
          if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
             let template = rep?.template;
             rep?.users.forEach((user)=>{
-                sendNotification(template,"Project",boardId,user?.id);
+                sendNotification(template,"Project",boardId,user?.id,token);
             });
          }
          res.status(200).send(req.body);
@@ -94,6 +114,8 @@ app.post('/access/token', (req, resp) => {
         client_secret: process.env.CLIENT_SECRET
     }).then((response) => {
         console.log("response : ", response);
+        req.session.access_token = resp?.data?.access_token;
+        req.session.save();
         resp.json(response?.data);
     }, (error) => {
         resp.status(401).json({ error: "Authorization failed , Please try again" })
