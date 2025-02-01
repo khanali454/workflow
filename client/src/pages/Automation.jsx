@@ -178,14 +178,12 @@ const Automation = () => {
         console.log("columnId :",columnId);
           if(cfig?.columnId == columnId){
             return true;
+          }else{
+            return false;
           }
       });
       
     });
-
-
-    return false;
-
   }
 
 
