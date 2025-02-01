@@ -170,8 +170,7 @@ const Automation = () => {
       console.log("webhooks : ", response);
       const webhooks = response?.data?.data?.webhooks;
       console.log("response webhooks : ", webhooks);
-      const webhook = webhooks.foreach((webhook) => {
-        
+      webhooks.map((webhook) => {
         const cfg = webhook?.config;
         const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
         const cfig = JSON.parse(validJsonString);
