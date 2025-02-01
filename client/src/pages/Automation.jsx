@@ -204,11 +204,41 @@ const Automation = () => {
       users: all_users
     };
 
-    if (webhookDuplicacy(active_board_id, selectedColumn)) {
-      console.log("yes found !!");
-    } else {
-      console.log("not found !! must be created");
-    }
+    
+
+    let webhook_read_query = `query {
+      webhooks(board_id: ${active_board_id},app_webhooks_only:true){
+        id
+        event
+        board_id
+        config
+      }
+    }`;
+
+    axios.post('https://api.monday.com/v2', {
+      query: webhook_read_query
+    }, {
+      headers: {
+        'Authorization': `Bearer ${token}`
+      }
+    }).then((response) => {
+      console.log("webhooks : ", response);
+      const webhooks = response?.data?.data?.webhooks;
+      console.log("response webhooks : ", webhooks);
+      webhooks.map((webhook) => {
+        const cfg = webhook?.config;
+        const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
+        const cfig = JSON.parse(validJsonString);
+        console.log(" cfig?.columnId : ", cfig?.columnId);
+        console.log("selectedColumn :",selectedColumn);
+          if(cfig?.columnId == selectedColumn){
+            console.log("already found create only automation");
+          }else{
+            console.log("not found create both automation & webhook");
+          }
+      });
+      
+    });
 
 
     const query = `
