@@ -150,7 +150,7 @@ const Automation = () => {
   }
 
 
-   function webhookDuplicacy(boardId, columnId) {
+  function webhookDuplicacy(boardId, columnId) {
     let webhook_read_query = `query {
       webhooks(board_id: ${boardId},app_webhooks_only:true){
         id
@@ -175,14 +175,14 @@ const Automation = () => {
         const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
         const cfig = JSON.parse(validJsonString);
         console.log(" cfig?.columnId : ", cfig?.columnId);
-        console.log("columnId :",columnId);
-          if(cfig?.columnId == columnId){
-            return true;
-          }else{
-            return false;
-          }
+        console.log("columnId :", columnId);
+        if (cfig?.columnId == columnId) {
+          return true;
+        } else {
+          return false;
+        }
       });
-      
+
     });
   }
 
@@ -204,7 +204,7 @@ const Automation = () => {
       users: all_users
     };
 
-    
+
 
     let webhook_read_query = `query {
       webhooks(board_id: ${active_board_id},app_webhooks_only:true){
@@ -230,52 +230,60 @@ const Automation = () => {
         const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
         const cfig = JSON.parse(validJsonString);
         console.log(" cfig?.columnId : ", cfig?.columnId);
-        console.log("selectedColumn :",selectedColumn);
-          if(cfig?.columnId == selectedColumn){
-            console.log("already found create only automation");
-          }else{
-            console.log("not found create both automation & webhook");
-          }
+        console.log("selectedColumn :", selectedColumn);
+        if (cfig?.columnId == selectedColumn) {
+          console.log("already found create only automation");
+
+           axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
+            if (resp?.data?.success) {
+              alert("Automation Created successfully");
+            } else {
+              alert(resp?.data?.msg);
+            }
+          }, (error) => {
+            console.log("error : ", error);
+          });
+
+        } else {
+          console.log("not found create both automation & webhook");
+
+
+          const query = `
+                  mutation {
+                    create_webhook (
+                      board_id: ${active_board_id}, 
+                      url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
+                      event: change_status_column_value, 
+                      config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
+                    ) { 
+                      id 
+                      board_id 
+                    } 
+                  }
+                `;
+          axios.post('https://api.monday.com/v2', { query }, {
+            headers: {
+              'Authorization': `Bearer ${token}`
+            }
+          }).then((response) => {
+            console.log("response webhook created : ", response);
+          });
+
+          axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
+            if (resp?.data?.success) {
+              alert("Automation Created successfully");
+            } else {
+              alert(resp?.data?.msg);
+            }
+          }, (error) => {
+            console.log("error : ", error);
+          });
+
+
+        }
       });
-      
+
     });
-
-
-    const query = `
-    mutation {
-      create_webhook (
-        board_id: ${active_board_id}, 
-        url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
-        event: change_status_column_value, 
-        config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
-      ) { 
-        id 
-        board_id 
-      } 
-    }
-  `;
-
-    //   axios.post('https://api.monday.com/v2', { query }, {
-    //     headers: {
-    //       'Authorization': `Bearer ${token}`
-    //     }
-    //   }).then((response) => {
-    //     console.log("response webhook created : ", response);
-    //   });
-
-    // axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
-    //   if (resp?.data?.success) {
-    //     alert("Automation Created successfully");
-    //     console.log("success response : ", resp);
-    //   } else {
-    //     console.log("error response : ", resp);
-    //     alert(resp?.data?.msg);
-    //   }
-    // }, (error) => {
-    //   console.log("error : ", error);
-    // });
-
-
 
   }
 
