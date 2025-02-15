@@ -3,6 +3,7 @@ const ObjectId = mongoose.Schema.ObjectId;
 const automationSchema = new mongoose.Schema({
     _id: ObjectId,
     template: String,
+    token: String,
     board_id: String,
     notification: String,
     columnType: String,

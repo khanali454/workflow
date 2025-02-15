@@ -27,7 +27,7 @@ app.use(session({
     resave: true
 }));
 
-const sendNotification = (notification_text, TargetType = "Project", BoardId, UserId,token) => {
+const sendNotification = (notification_text, TargetType = "Project", BoardId, UserId,tokenis) => {
     let query = `mutation {
         create_notification (user_id: ${UserId}, target_id: ${BoardId}, text: ${notification_text}, target_type: ${TargetType}) {
           text
@@ -35,7 +35,7 @@ const sendNotification = (notification_text, TargetType = "Project", BoardId, Us
     }`;
     axios.post('https://api.monday.com/v2', { query }, {
       headers: {
-        'Authorization': `Bearer ${token}`
+        'Authorization': `Bearer ${tokenis}`
       }
     }).then((response) => {
       console.log("response webhook created : ", response);
@@ -60,7 +60,7 @@ app.post("/webhook", function (req, res) {
          if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
             let notification = rep?.notification;
             rep?.users.forEach((user)=>{
-                sendNotification(notification,"Project",boardId,user?.id,token);
+                sendNotification(notification,"Project",boardId,user?.id,rep?.token);
             });
          }
          res.status(200).send(req.body);
@@ -69,6 +69,7 @@ app.post("/webhook", function (req, res) {
 });
 app.post('/create/automation', (req, resp) => {
     let boardId = req.body.boardId;
+    let token = req.body.token;
     let notification = req.body.notification;
     let columnId = req.body.columnId;
     let columnValue = req.body.columnValue;
@@ -91,6 +92,7 @@ app.post('/create/automation', (req, resp) => {
     AutomationModel.findOneAndUpdate(filter, {
         $set: {
             template: template,
+            token:token,
             board_id: boardId,
             notification: notification,
             columnType: columnType,

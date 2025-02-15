@@ -196,6 +196,7 @@ const NewAutomation = () => {
     }
     let automationData = {
       template: "when status changes to something notify someone",
+      token:token,
       boardId: active_board_id,
       notification: `Hey there,'${selectedColumnName}' was marked as '${selectedStatusLabel}' on the board '${active_board_id}'.`,
       columnType: "status",

@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import axios from 'axios';
+import Loader from '../components/Loader';
 
 function Automations() {
     const [automations, setAutomations] = useState([]);
@@ -36,9 +37,11 @@ function Automations() {
                         <div className="relative flex flex-col min-w-0 break-words w-full mb-6 shadow-lg rounded bg-pink-900 text-white">
                             <div className="block w-full overflow-x-auto ">
                                 {loading ? (
-                                    <div>Loading...</div>
+                                    <div className='px-2 py-4'>
+                                        <Loader/>
+                                    </div>
                                 ) : error ? (
-                                    <div>{error}</div>
+                                    <div className='px-2 py-3'>{error}</div>
                                 ) : (
                                     <table className="items-center w-full bg-transparent border-collapse">
                                         <thead>
