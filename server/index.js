@@ -8,8 +8,7 @@ const AutomationModel = require('./models/Automation');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-const session = require("express-session");
-const cookieParser = require("cookie-parser");
+
 
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
@@ -18,14 +17,9 @@ app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
 
-// Initialization
-app.use(cookieParser());
 
-app.use(session({
-    secret: "token",
-    saveUninitialized: true,
-    resave: true
-}));
+
+
 
 const sendNotification = (notification_text, TargetType = "Project", BoardId, UserId,tokenis) => {
     let query = `mutation {
@@ -127,8 +121,6 @@ app.post('/access/token', (req, resp) => {
         client_secret: process.env.CLIENT_SECRET
     }).then((response) => {
         console.log("response : ", response);
-        req.session.access_token = resp?.data?.access_token;
-        req.session.save();
         resp.json(response?.data);
     }, (error) => {
         resp.status(401).json({ error: "Authorization failed , Please try again" })
