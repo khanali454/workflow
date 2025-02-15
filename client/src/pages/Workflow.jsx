@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react'
-import { useNavigate } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import Loader from '../components/Loader';
 import TableRow from '../components/TableRow';
@@ -24,7 +24,7 @@ const Workflow = () => {
           'Authorization': `Bearer ${token}`
         }
       }).then((response) => {
-        setBoards(response.data.data.boards.filter((board)=>board.type=="board"));
+        setBoards(response.data.data.boards.filter((board) => board.type == "board"));
       })
     } else {
       navigate('/')
@@ -32,7 +32,7 @@ const Workflow = () => {
   }, [token])
 
 
- 
+
   useEffect(() => {
     // get columns and show in table 
     if (active_board_id != null) {
@@ -98,7 +98,7 @@ const Workflow = () => {
           setActiveBoard(item_idss);
           setLoadingColumns(false);
 
-        }else{
+        } else {
           setActiveBoard([]);
         }
         // console.log(active_board_items);
@@ -138,7 +138,7 @@ const Workflow = () => {
               <p className="text-sm">No Board data</p>
             )}
 
-            {boards?.length > 0 && boards?.map((board,key) => {
+            {boards?.length > 0 && boards?.map((board, key) => {
               return (
                 <li title={board?.name} key={key}>
                   <a onClick={() => { setActiveBoardId(board?.id); setActiveBoardName(board?.name); setLoadingColumns(true); }} className={`flex items-center p-2 cursor-pointer  rounded-lg ${board?.id == active_board_id ? 'bg-pink-800 text-pink-100 border-pink-700' : 'text-gray-900'} font-normal truncate ...`}>
@@ -154,6 +154,11 @@ const Workflow = () => {
       </aside>
 
       <div className="p-4 sm:ml-64 h-screen">
+        <div className="py-2 flex items-center gap-1">
+          <Link to={'/automations'} className='bg-blue-500 px-3 py-1 rounded text-white'>
+            Automations
+          </Link>
+        </div>
         <div className="border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
 
 
@@ -188,7 +193,7 @@ const Workflow = () => {
                       <table className="items-center w-full bg-transparent border-collapse">
                         <thead>
                           <tr>
-                            {columns?.length > 0 && columns?.map((column,key) => {
+                            {columns?.length > 0 && columns?.map((column, key) => {
                               return (
                                 <th key={key} className="text-center w-fit align-middle border border-solid py-3 text-xs uppercase border-l-0 border-r-0 whitespace-nowrap font-semibold bg-pink-800 text-pink-300 border-pink-700">{column?.title}</th>
                               )
@@ -196,13 +201,13 @@ const Workflow = () => {
                           </tr>
                         </thead>
 
-                          {active_board?.length > 0 && (
-                            // console.log(active_board, active_board_id,items_names)
-                              <TableRow board_id={active_board_id} item_ids={active_board} length={columns?.length} />
-                          )}
+                        {active_board?.length > 0 && (
+                          // console.log(active_board, active_board_id,items_names)
+                          <TableRow board_id={active_board_id} item_ids={active_board} length={columns?.length} />
+                        )}
 
 
-                          {/* <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
+                        {/* <th className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4 text-left flex items-center">
                               <img src="https://demos.creative-tim.com/notus-js/assets/img/bootstrap.jpg" className="h-12 w-12 bg-white rounded-full border" alt="..." />
                               <span className="ml-3 font-bold text-white"> Argon Design System </span></th>
                             <td className="border-t-0 px-6 align-middle border-l-0 border-r-0 text-xs whitespace-nowrap p-4">$2,500 USD</td>

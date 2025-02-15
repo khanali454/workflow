@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom';
 
 function Authorize() {
@@ -9,6 +9,12 @@ function Authorize() {
     if (token) {
         navigate('/monday/app');
     }
+
+    useEffect(()=>{
+        if (token) {
+            navigate('/monday/app');
+        }
+    },[token])
 
 
     return (

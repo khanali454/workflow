@@ -58,9 +58,9 @@ app.post("/webhook", function (req, res) {
     .then((rep) => {
          console.log("rep : ", rep);
          if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
-            let template = rep?.template;
+            let notification = rep?.notification;
             rep?.users.forEach((user)=>{
-                sendNotification(template,"Project",boardId,user?.id,token);
+                sendNotification(notification,"Project",boardId,user?.id,token);
             });
          }
          res.status(200).send(req.body);
@@ -104,6 +104,17 @@ app.post('/create/automation', (req, resp) => {
         resp.json({ success: true, msg: 'Automation Created Successfully!' });
     })
 })
+
+
+app.get('/automations', async (req, res) => {
+    try {
+        const automations = await AutomationModel.find();
+        res.status(200).json({ success: true, data: automations });
+    } catch (err) {
+        console.error("Error loading automations:", err);
+        res.status(500).json({ success: false, msg: "Failed to load automations" });
+    }
+});
 
 
 app.post('/access/token', (req, resp) => {

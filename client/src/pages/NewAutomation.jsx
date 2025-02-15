@@ -6,7 +6,7 @@ import { FaArrowDown, FaLongArrowAltDown } from "react-icons/fa";
 import { toast } from 'react-toastify';
 
 
-const Automation = () => {
+const NewAutomation = () => {
   const token = localStorage.getItem('access_token');
   const [loadingColumns, setLoadingColumns] = useState(false);
   const navigate = useNavigate();
@@ -519,4 +519,4 @@ const Automation = () => {
   )
 }
 
-export default Automation
+export default NewAutomation

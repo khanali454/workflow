@@ -4,7 +4,8 @@ import {
 } from "react-router-dom";
 import { Callback } from '../pages/Callback.jsx';
 import Workflow from '../pages/Workflow.jsx';
-import Automation from '../pages/Automation.jsx';
+import Automations from '../pages/Automations.jsx';
+import NewAutomation from '../pages/NewAutomation.jsx';
 
 const router = createBrowserRouter([
   {
@@ -12,8 +13,12 @@ const router = createBrowserRouter([
     element: <App />,
   },
   {
-    path: "/automation",
-    element: <Automation />,
+    path: "/automation/new",
+    element: <NewAutomation />,
+  },
+  {
+    path: "/automations",
+    element: <Automations />,
   },
   {
     path: "/oauth/callback",
