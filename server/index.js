@@ -143,7 +143,7 @@ app.post("/webhook", async function (req, res) {
     }
 });
 
-app.post('/create/automation', (req, resp) => {
+app.post('/create/automation', async (req, resp) => {
     let boardId = req.body.boardId;
     let token = req.body.token;
     let notification = req.body.notification;
@@ -153,34 +153,46 @@ app.post('/create/automation', (req, resp) => {
     let users = req.body.users;
     let columnType = req.body.columnType;
 
+    // Check for missing required fields
     if (!boardId || !notification || !columnId || !columnValue || !template || !users || !columnType) {
-        resp.status(200).json({ success: false, msg: "All fields are required" });
+        return resp.status(400).json({ success: false, msg: "All fields are required" });
     }
 
-    const filter = {
-        board_id: {$eq:`${boardId}`},
-        columnType: {$eq:`${columnType}`},
-        columnId: {$eq:`${columnId}`},
-        columnValue: {$eq:`${columnValue}`},
-    };
-
-    AutomationModel.findOneAndUpdate(filter, {
-        $set: {
-            template: template,
-            token:token,
+    try {
+        // Create a filter to check if the automation already exists
+        const filter = {
             board_id: boardId,
-            notification: notification,
-            columnType: columnType,
             columnId: columnId,
-            columnValue: columnValue,
-            users: users,
-        }
-    }, {
-        upsert: true
-    }).then(() => {
-        resp.json({ success: true, msg: 'Automation Created Successfully!' });
-    })
-})
+            columnType: columnType,
+            columnValue: columnValue
+        };
+
+        // Find the existing automation or create a new one if not found
+        await AutomationModel.findOneAndUpdate(filter, {
+            $set: {
+                template: template,
+                token: token,
+                board_id: boardId,
+                notification: notification,
+                columnType: columnType,
+                columnId: columnId,
+                columnValue: columnValue,
+                users: users,
+            }
+        }, {
+            upsert: true, // This ensures it creates a new entry if it doesn't exist
+            new: true, // This will return the updated document after the update or insert operation
+        });
+
+        resp.json({ success: true, msg: 'Automation Created or Updated Successfully!' });
+
+    } catch (err) {
+        // If an error occurs, return a response with the error message
+        console.error(err);
+        resp.status(500).json({ success: false, msg: 'Server Error', error: err.message });
+    }
+});
+
 
 
 app.get('/automations', async (req, res) => {
