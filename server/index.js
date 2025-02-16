@@ -48,6 +48,7 @@ app.post("/webhook", function (req, res) {
     .then((rep) => {
          console.log("rep : ", rep);
          if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
+            console.log("condition true");
             let notification = rep?.notification;
             rep?.users.forEach((user)=>{
                 let query = `mutation {
@@ -63,8 +64,11 @@ app.post("/webhook", function (req, res) {
                   console.log("response webhook created : ", response);
                 });
             });
-         }
-         res.status(200).send(req.body);
+            res.status(200).send(req.body);
+         }else {
+            console.log("Condition not met: rep?.columnValue: ", rep?.columnValue, ", currentValue: ", currentValue);
+            res.status(200).send(req.body);
+        }
         })
         .catch((err) => console.error("Query Error:", err));
 });
