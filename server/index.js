@@ -32,7 +32,48 @@ const sendNotification = (notification_text, TargetType = "Project", BoardId, Us
     });
 }
 
-app.post("/webhook", function (req, res) {
+// app.post("/webhook", function (req, res) {
+//     console.log(JSON.stringify(req.body, 0, 2));
+//     var boardId = req.body.event.boardId;
+//     var columnId = req.body.event.columnId;
+//     var currentValue = req.body.event.value.label.text;
+//     var previousValue = req.body.event.previousValue.label.text;
+//     console.log("boardId : ", boardId);
+//     console.log("columnId : ", columnId);
+//     console.log("currentValue : ", currentValue);
+//     console.log("previousValue : ", previousValue);
+
+//     // find item
+//     AutomationModel.findOne({ board_id: `${boardId}`,columnId:`${columnId}`})
+//     .then((rep) => {
+//          console.log("rep : ", rep);
+//          if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
+//             console.log("condition true");
+//             let notification = rep?.notification;
+//             rep?.users.forEach((user)=>{
+//                 let query = `mutation {
+//                     create_notification (user_id: ${user?.id}, target_id: ${boardId}, text: ${notification}, target_type: "Project") {
+//                       text
+//                     }
+//                 }`;
+//                 axios.post('https://api.monday.com/v2', { query }, {
+//                   headers: {
+//                     'Authorization': `Bearer ${rep?.token}`
+//                   }
+//                 }).then((response) => {
+//                   console.log("response notification : ", response);
+//                 });
+//             });
+//             res.status(200).send(req.body);
+//          }else {
+//             console.log("Condition not met: rep?.columnValue: ", rep?.columnValue, ", currentValue: ", currentValue);
+//             res.status(200).send(req.body);
+//         }
+//         })
+//         .catch((err) => console.error("Query Error:", err));
+// });
+
+app.post("/webhook", async function (req, res) {
     console.log(JSON.stringify(req.body, 0, 2));
     var boardId = req.body.event.boardId;
     var columnId = req.body.event.columnId;
@@ -43,35 +84,50 @@ app.post("/webhook", function (req, res) {
     console.log("currentValue : ", currentValue);
     console.log("previousValue : ", previousValue);
 
-    // find item
-    AutomationModel.findOne({ board_id: `${boardId}`,columnId:`${columnId}`})
-    .then((rep) => {
-         console.log("rep : ", rep);
-         if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
+    try {
+        // find item
+        const rep = await AutomationModel.findOne({ board_id: `${boardId}`, columnId: `${columnId}` });
+        console.log("rep : ", rep);
+
+        if (rep?.columnValue == currentValue || rep?.columnValue == "Anything") {
             console.log("condition true");
             let notification = rep?.notification;
-            rep?.users.forEach((user)=>{
+
+            // Create an array of promises for the notifications
+            const notificationPromises = rep?.users.map((user) => {
                 let query = `mutation {
                     create_notification (user_id: ${user?.id}, target_id: ${boardId}, text: ${notification}, target_type: "Project") {
                       text
                     }
                 }`;
-                axios.post('https://api.monday.com/v2', { query }, {
-                  headers: {
-                    'Authorization': `Bearer ${rep?.token}`
-                  }
+                
+                return axios.post('https://api.monday.com/v2', { query }, {
+                    headers: {
+                        'Authorization': `Bearer ${rep?.token}`
+                    }
                 }).then((response) => {
-                  console.log("response webhook created : ", response);
+                    console.log("response notification : ", response);
+                }).catch((error) => {
+                    console.error("Error creating notification: ", error);
                 });
             });
+
+            // Wait for all notification creation requests to complete
+            await Promise.all(notificationPromises);
+
+            // Send response to Monday.com after all notifications are sent
             res.status(200).send(req.body);
-         }else {
+        } else {
             console.log("Condition not met: rep?.columnValue: ", rep?.columnValue, ", currentValue: ", currentValue);
             res.status(200).send(req.body);
         }
-        })
-        .catch((err) => console.error("Query Error:", err));
+
+    } catch (err) {
+        console.error("Query Error:", err);
+        res.status(500).send("Internal Server Error");
+    }
 });
+
 app.post('/create/automation', (req, resp) => {
     let boardId = req.body.boardId;
     let token = req.body.token;
