@@ -186,8 +186,10 @@ const NewAutomation = () => {
     });
   }
 
+  const [processing, setProcessing] = useState(false);
 
   const createAutomation = () => {
+    setProcessing(true);
     let all_users = [];
     if (selectedUserTitle == "me") {
       all_users = [users?.me];
@@ -196,7 +198,7 @@ const NewAutomation = () => {
     }
     let automationData = {
       template: "when status changes to something notify someone",
-      token:token,
+      token: token,
       boardId: active_board_id,
       notification: `Hey there,'${selectedColumnName}' was marked as '${selectedStatusLabel}' on the board '${active_board_id}'.`,
       columnType: "status",
@@ -204,7 +206,6 @@ const NewAutomation = () => {
       columnValue: selectedStatusLabel,
       users: all_users
     };
-
 
 
     let webhook_read_query = `query {
@@ -223,9 +224,11 @@ const NewAutomation = () => {
         'Authorization': `Bearer ${token}`
       }
     }).then((response) => {
+
       console.log("webhooks : ", response);
       const webhooks = response?.data?.data?.webhooks;
       console.log("response webhooks : ", webhooks);
+      let alreadyFound = false;
       webhooks.map((webhook) => {
         const cfg = webhook?.config;
         const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
@@ -235,54 +238,64 @@ const NewAutomation = () => {
         if (cfig?.columnId == selectedColumn) {
           console.log("already found create only automation");
 
-           axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
-            if (resp?.data?.success) {
-              alert("Automation Created successfully");
-            } else {
-              alert(resp?.data?.msg);
-            }
-          }, (error) => {
-            console.log("error : ", error);
-          });
+          alreadyFound = true;
 
         } else {
           console.log("not found create both automation & webhook");
 
 
-          const query = `
-                  mutation {
-                    create_webhook (
-                      board_id: ${active_board_id}, 
-                      url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
-                      event: change_status_column_value, 
-                      config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
-                    ) { 
-                      id 
-                      board_id 
-                    } 
-                  }
-                `;
-          axios.post('https://api.monday.com/v2', { query }, {
-            headers: {
-              'Authorization': `Bearer ${token}`
-            }
-          }).then((response) => {
-            console.log("response webhook created : ", response);
-          });
-
-          axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
-            if (resp?.data?.success) {
-              alert("Automation Created successfully");
-            } else {
-              alert(resp?.data?.msg);
-            }
-          }, (error) => {
-            console.log("error : ", error);
-          });
-
-
         }
       });
+
+      if (alreadyFound) {
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
+          if (resp?.data?.success) {
+            alert("Automation Created successfully");
+          } else {
+            alert(resp?.data?.msg);
+          }
+        }, (error) => {
+          console.log("error : ", error);
+        }).finally(() => {
+          setProcessing(false);
+        });
+      } else {
+
+        const query = `
+        mutation {
+          create_webhook (
+            board_id: ${active_board_id}, 
+            url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
+            event: change_status_column_value, 
+            config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
+          ) { 
+            id 
+            board_id 
+          } 
+        }
+      `;
+        axios.post('https://api.monday.com/v2', { query }, {
+          headers: {
+            'Authorization': `Bearer ${token}`
+          }
+        }).then((response) => {
+          console.log("response webhook created : ", response);
+        });
+
+        axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
+          if (resp?.data?.success) {
+            alert("Automation Created successfully");
+          } else {
+            alert(resp?.data?.msg);
+          }
+        }, (error) => {
+          console.log("error : ", error);
+        }).finally(() => {
+          setProcessing(false);
+        });
+
+
+      }
 
     });
 
@@ -467,10 +480,6 @@ const NewAutomation = () => {
                               </div>
                             )}
 
-
-
-
-
                           </span> <span className='relative' ref={userModalRef}>
                             <span className={`${showUserModal ? 'text-green-500' : 'text-gray-500'}  border-b border-black text-lg cursor-pointer`} onClick={() => { setShowUserModal(!showUserModal) }}>
                               {selectedUserTitle && (
@@ -503,7 +512,7 @@ const NewAutomation = () => {
                           </span>
 
                         </p>
-                        <button className="bg-blue-600 text-white px-4 text-sm py-2 rounded my-4 mt-8 cursor-pointer hover:bg-blue-500" onClick={() => { createAutomation(); }}>Create Automation</button>
+                        <button className="bg-blue-600 text-white px-4 text-sm py-2 rounded my-4 mt-8 cursor-pointer hover:bg-blue-500" disabled={processing} onClick={() => { createAutomation(); }}>Create Automation</button>
                       </p>
                     </div>
                   </>

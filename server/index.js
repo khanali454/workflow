@@ -8,16 +8,12 @@ const AutomationModel = require('./models/Automation');
 const app = express();
 const PORT = process.env.PORT || 8080;
 
-
-
 app.use(cors());
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json())
 app.listen(PORT, () => {
     console.log(`server listening on port ${PORT}`);
 });
-
-
 
 
 
@@ -54,7 +50,18 @@ app.post("/webhook", function (req, res) {
          if(rep?.columnValue==currentValue || rep?.columnValue=="Anything"){
             let notification = rep?.notification;
             rep?.users.forEach((user)=>{
-                sendNotification(notification,"Project",boardId,user?.id,rep?.token);
+                let query = `mutation {
+                    create_notification (user_id: ${user?.id}, target_id: ${boardId}, text: ${notification}, target_type: "Project") {
+                      text
+                    }
+                }`;
+                axios.post('https://api.monday.com/v2', { query }, {
+                  headers: {
+                    'Authorization': `Bearer ${rep?.token}`
+                  }
+                }).then((response) => {
+                  console.log("response webhook created : ", response);
+                });
             });
          }
          res.status(200).send(req.body);
