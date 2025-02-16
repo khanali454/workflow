@@ -8,6 +8,16 @@ function Automations() {
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
     const {board_id} = useParams();
+    const token = localStorage.getItem('access_token');
+
+
+     useEffect(() => {
+            if (token != null && token != "") {
+             
+            } else {
+              navigate('/')
+            }
+          }, [token])
 
     // Fetch automations from the API
     useEffect(() => {

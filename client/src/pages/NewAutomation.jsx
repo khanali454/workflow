@@ -347,6 +347,11 @@ const NewAutomation = () => {
       </aside>
 
       <div className="p-4 sm:ml-64 h-screen">
+        <div className="py-2 flex items-center gap-1">
+          <Link to={'/'} className="bg-blue-500 px-3 py-1 rounded text-white">
+            Boards
+          </Link>
+        </div>
         <div className="border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
 
 

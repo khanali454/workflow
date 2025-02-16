@@ -10,6 +10,14 @@ function Webhooks() {
     const { board_id } = useParams(); // Get the board_id from the URL params
     const token = localStorage.getItem('access_token');
 
+    useEffect(() => {
+        if (token != null && token != "") {
+         
+        } else {
+          navigate('/')
+        }
+      }, [token])
+
     // Fetch webhooks for the given board_id
     useEffect(() => {
         const fetchWebhooks = async () => {
