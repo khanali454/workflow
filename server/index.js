@@ -95,26 +95,39 @@ app.post("/webhook", async function (req, res) {
 
             // Create an array of promises for the notifications
             const notificationPromises = rep?.users.map((user) => {
-                let query = `mutation {
-                    create_notification (user_id: ${user?.id}, target_id: ${boardId}, text: ${notification}, target_type: "Project") {
-                      text
+                const query = `
+                    mutation {
+                        create_notification(user_id: ${user?.id}, target_id: ${boardId}, text: "${notification}", target_type: "Project") {
+                            text
+                        }
                     }
-                }`;
-                
+                `;
+            
                 return axios.post('https://api.monday.com/v2', { query }, {
                     headers: {
-                        'Authorization': `Bearer ${rep?.token}`
+                        'Authorization': `Bearer ${rep?.token}`,
+                        'Content-Type': 'application/json'
                     }
-                }).then((response) => {
-                    console.log("response notification : ", response);
-                }).catch((error) => {
-                    console.error("Error creating notification: ", error);
+                })
+                .then((response) => {
+                    console.log("Response notification:", response.data);
+                })
+                .catch((error) => {
+                    console.error("Error creating notification:", error);
                 });
             });
+            
+            // If you want to wait for all notifications to complete:
+           await Promise.all(notificationPromises)
+                .then(() => {
+                    console.log('All notifications sent successfully');
+                })
+                .catch(() => {
+                    console.error('Error sending one or more notifications');
+                });
+            
 
-            // Wait for all notification creation requests to complete
-            await Promise.all(notificationPromises);
-
+           
             // Send response to Monday.com after all notifications are sent
             res.status(200).send(req.body);
         } else {
