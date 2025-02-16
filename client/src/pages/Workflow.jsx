@@ -155,15 +155,18 @@ const Workflow = () => {
 
       <div className="p-4 sm:ml-64 h-screen">
         <div className="py-2 flex items-center gap-2">
+          <Link to={'/automation/new'} className='bg-blue-500 px-3 py-1 rounded text-white'>
+            Create Automation
+          </Link>
           {active_board_id && (
-         <>
-          <Link to={'/automations/'+active_board_id} className='bg-blue-500 px-3 py-1 rounded text-white'>
-            Automations
-          </Link>
-          <Link to={'/webhooks/'+active_board_id} className='bg-blue-500 px-3 py-1 rounded text-white'>
-            Webhooks
-          </Link>
-         </>
+            <>
+              <Link to={'/automations/' + active_board_id} className='bg-blue-500 px-3 py-1 rounded text-white'>
+                Automations
+              </Link>
+              <Link to={'/webhooks/' + active_board_id} className='bg-blue-500 px-3 py-1 rounded text-white'>
+                Webhooks
+              </Link>
+            </>
 
           )}
         </div>

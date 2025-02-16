@@ -229,23 +229,22 @@ const NewAutomation = () => {
       const webhooks = response?.data?.data?.webhooks;
       console.log("response webhooks : ", webhooks);
       let alreadyFound = false;
-      webhooks.map((webhook) => {
-        const cfg = webhook?.config;
-        const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
-        const cfig = JSON.parse(validJsonString);
-        console.log(" cfig?.columnId : ", cfig?.columnId);
-        console.log("selectedColumn :", selectedColumn);
-        if (cfig?.columnId == selectedColumn) {
-          console.log("already found create only automation");
+      if (webhooks.length > 0) {
+        webhooks.map((webhook) => {
+          const cfg = webhook?.config;
+          const validJsonString = cfg.replace(/"=>/g, '":').replace(/=>/g, ':');
+          const cfig = JSON.parse(validJsonString);
+          console.log(" cfig?.columnId : ", cfig?.columnId);
+          console.log("selectedColumn :", selectedColumn);
+          if (cfig?.columnId == selectedColumn) {
+            console.log("already found create only automation");
+            alreadyFound = true;
+          } else {
+            console.log("not found create both automation & webhook");
+          }
+        });
+      }
 
-          alreadyFound = true;
-
-        } else {
-          console.log("not found create both automation & webhook");
-
-
-        }
-      });
 
       if (alreadyFound) {
         axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {

@@ -162,7 +162,6 @@ app.post('/create/automation', (req, resp) => {
         columnType: {$eq:`${columnType}`},
         columnId: {$eq:`${columnId}`},
         columnValue: {$eq:`${columnValue}`},
-        users: {$eq:users},
     };
 
     AutomationModel.findOneAndUpdate(filter, {

@@ -13,7 +13,7 @@ function Automations() {
     useEffect(() => {
         const fetchAutomations = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/automations/`+board_id);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/automations?board_id=`+board_id);
                 setAutomations(response.data.data); // Assuming the response has a 'data' property
                 setLoading(false);
             } catch (err) {
@@ -27,9 +27,9 @@ function Automations() {
 
     return (
         <div className="p-4 h-screen">
-            <div className="py-2 flex items-center gap-1">
-                <Link to={'/automation/new'} className='bg-blue-500 px-3 py-1 rounded text-white'>
-                    Create New
+            <div className="py-2 flex items-center gap-2">
+                <Link to={'/'} className='bg-gray-300 px-3 py-1 rounded text-black'>
+                    Home
                 </Link>
             </div>
             <div className="border-2 border-gray-200 border-dashed rounded-lg dark:border-gray-700">
