@@ -94,16 +94,18 @@ app.post("/webhook", async function (req, res) {
             let notification = rep?.notification;
 
             // Create an array of promises for the notifications
-            const notificationPromises = rep?.users.map((user) => {
+            const notificationPromises = rep?.users.map(async (user) => {
+                const safeNotificationText = notification.replace(/"/g, '\\"');  // Escape double quotes
+
                 const query = `
                     mutation {
-                        create_notification(user_id: ${user?.id}, target_id: ${boardId}, text: "${notification}", target_type: "Project") {
+                        create_notification(user_id: ${user?.id}, target_id: ${boardId}, text: "${safeNotificationText}", target_type: "Project") {
                             text
                         }
                     }
                 `;
             
-                return axios.post('https://api.monday.com/v2', { query }, {
+                return axios.post('https://api.monday.com/v2', { query: query }, {
                     headers: {
                         'Authorization': `Bearer ${rep?.token}`,
                         'Content-Type': 'application/json'
