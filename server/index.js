@@ -194,6 +194,33 @@ app.post('/create/automation', async (req, resp) => {
 });
 
 
+app.delete('/delete/automation', async (req, res) => {
+    let automationId = req.body.automationId;  // ObjectId of the automation to delete
+
+    // Check if automationId is provided
+    if (!automationId) {
+        return res.status(400).json({ success: false, msg: "Automation ID is required" });
+    }
+
+    try {
+        // Delete the automation by its ObjectId
+        const deletedAutomation = await AutomationModel.findByIdAndDelete(automationId);
+
+        if (deletedAutomation) {
+            // If automation is found and deleted
+            res.json({ success: true, msg: 'Automation Deleted Successfully!' });
+        } else {
+            // If no automation is found to delete
+            res.status(404).json({ success: false, msg: 'Automation not found' });
+        }
+
+    } catch (err) {
+        // Handle any errors during the deletion process
+        console.error("Error deleting automation:", err);
+        res.status(500).json({ success: false, msg: 'Server Error', error: err.message });
+    }
+});
+
 
 app.get('/automations', async (req, res) => {
     try {
