@@ -237,7 +237,6 @@ const NewAutomation = () => {
           console.log(" cfig?.columnId : ", cfig?.columnId);
           console.log("selectedColumn :", selectedColumn);
           if (cfig?.columnId == selectedColumn) {
-            console.log("already found create only automation");
             alreadyFound = true;
           } else {
             console.log("not found create both automation & webhook");
@@ -247,6 +246,7 @@ const NewAutomation = () => {
 
 
       if (alreadyFound) {
+        console.log("already found create only automation");
         axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
           if (resp?.data?.success) {
             alert("Automation Created successfully");
@@ -260,38 +260,44 @@ const NewAutomation = () => {
         });
       } else {
 
-        const query = `
+        console.log("not found create both automation & webhook");
+        const query1 = `
         mutation {
           create_webhook (
             board_id: ${active_board_id}, 
             url: "${import.meta.env.VITE_API_BASE_URL}/webhook", 
             event: change_status_column_value, 
             config: "{\\"columnId\\":\\"${selectedColumn}\\", \\"columnValue\\":{\\"$any$\\":true}}"
-          ) { 
+            ) { 
             id 
             board_id 
           } 
         }
-      `;
-        axios.post('https://api.monday.com/v2', { query }, {
+        `;
+        axios.post('https://api.monday.com/v2', { query: query1 }, {
           headers: {
             'Authorization': `Bearer ${token}`
           }
-        }).then((response) => {
-          console.log("response webhook created : ", response);
-        });
+        }).then((response2) => {
+          console.log("response webhook created : ", response2);
 
-        axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
-          if (resp?.data?.success) {
-            alert("Automation Created successfully");
-          } else {
-            alert(resp?.data?.msg);
-          }
-        }, (error) => {
-          console.log("error : ", error);
+          axios.post(`${import.meta.env.VITE_API_BASE_URL}/create/automation`, automationData).then((resp) => {
+            if (resp?.data?.success) {
+              alert("Automation Created successfully");
+            } else {
+              alert(resp?.data?.msg);
+            }
+          }, (error) => {
+            console.log("error : ", error);
+          }).finally(() => {
+            setProcessing(false);
+          });
+
+
         }).finally(() => {
           setProcessing(false);
         });
+
 
 
       }
