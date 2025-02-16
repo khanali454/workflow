@@ -186,13 +186,25 @@ app.post('/create/automation', (req, resp) => {
 
 app.get('/automations', async (req, res) => {
     try {
-        const automations = await AutomationModel.find();
+        // Get the board_id from the query parameter
+        const boardId = req.query.board_id;
+
+        // If a board_id is provided, filter automations by board_id
+        let query = {};
+        if (boardId) {
+            query.board_id = boardId;
+        }
+
+        // Fetch automations based on the filter
+        const automations = await AutomationModel.find(query);
+
         res.status(200).json({ success: true, data: automations });
     } catch (err) {
         console.error("Error loading automations:", err);
         res.status(500).json({ success: false, msg: "Failed to load automations" });
     }
 });
+
 
 
 app.post('/access/token', (req, resp) => {

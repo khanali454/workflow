@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import axios from 'axios';
 import Loader from '../components/Loader';
 
@@ -7,12 +7,13 @@ function Automations() {
     const [automations, setAutomations] = useState([]);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
+    const {board_id} = useParams();
 
     // Fetch automations from the API
     useEffect(() => {
         const fetchAutomations = async () => {
             try {
-                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/automations`);
+                const response = await axios.get(`${import.meta.env.VITE_API_BASE_URL}/automations/`+board_id);
                 setAutomations(response.data.data); // Assuming the response has a 'data' property
                 setLoading(false);
             } catch (err) {

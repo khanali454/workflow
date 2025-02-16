@@ -17,7 +17,7 @@ const router = createBrowserRouter([
     element: <NewAutomation />,
   },
   {
-    path: "/automations",
+    path: "/automations/:board_id",
     element: <Automations />,
   },
   {
